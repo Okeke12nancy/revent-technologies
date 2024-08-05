@@ -1,0 +1,113 @@
+version: "3.8"
+
+services:
+  user_microservice:
+    build:
+      context: ./
+      dockerfile: ./services/user/Dockerfile
+      args:
+        - USER_SERVICE_PORT=3001
+    container_name: user_microservice
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/revent_ecommerce?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - USER_SERVICE_PORT=3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+
+  admin_microservice:
+    build:
+      context: ./
+      dockerfile: ./services/admin/Dockerfile
+      args:
+        - ADMIN_SERVICE_PORT=3002
+    container_name: admin_microservice
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/revent_ecommerce?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ADMIN_SERVICE_PORT=3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+
+  product_microservice:
+    build:
+      context: ./
+      dockerfile: ./services/product/Dockerfile
+      args:
+        - PRODUCT_SERVICE_PORT=3003
+    container_name: product_microservice
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/revent_ecommerce?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PRODUCT_SERVICE_PORT=3003
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - redis
+
+  auction_microservice:
+    build:
+      context: ./
+      dockerfile: ./services/auction/Dockerfile
+      args:
+        - AUCTION_SERVICE_PORT=3004
+    container_name: auction_microservice
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/revent_ecommerce?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AUCTION_SERVICE_PORT=3004
+    ports:
+      - "3004:3004"
+    depends_on:
+      - postgres
+      - redis
+
+  order_microservice:
+    build:
+      context: ./
+      dockerfile: ./services/order/Dockerfile
+      args:
+        - ORDER_SERVICE_PORT=3005
+    container_name: order_microservice
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/revent_ecommerce?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ORDER_SERVICE_PORT=3005
+    ports:
+      - "3005:3005"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=revent_ecommerce
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    ports:
+      - "6380:6379"

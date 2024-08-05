@@ -1,0 +1,88 @@
+{
+  "name": "revent_coding_challenge",
+  "version": "1.0.0",
+  "description": "## Overview",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run start --workspaces --if-present",
+    "dev": "concurrently \"npm run dev:services:*\"",
+    "prebuild": "prisma generate & prisma db push",
+    "build": "tsc && concurrently \"npm run build:services:*\"",
+    "dev:services:user": "cd services/user && npm run dev",
+    "build:services:user": "cd services/user && npm run build",
+    "start:services:user": "cd services/user && npm run start",
+    "dev:services:admin": "cd services/admin && npm run dev",
+    "build:services:admin": "cd services/admin && npm run build",
+    "start:services:admin": "cd services/admin && npm run start",
+    "dev:services:product": "cd services/product && npm run dev",
+    "build:services:product": "cd services/product && npm run build",
+    "start:services:product": "cd services/product && npm run start",
+    "dev:services:auction": "cd services/auction && npm run dev",
+    "build:services:auction": "cd services/auction && npm run build",
+    "start:services:auction": "cd services/auction && npm run start",
+    "dev:services:order": "cd services/order && npm run dev",
+    "build:services:order": "cd services/order && npm run build",
+    "start:services:order": "cd services/order && npm run start",
+    "lint-staged": "lint-staged",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "services/user",
+    "services/admin",
+    "services/product",
+    "services/order",
+    "services/auction"
+  ],
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.0.2",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.8.0",
+    "globals": "^15.8.0",
+    "husky": "^9.1.4",
+    "lint-staged": "^15.2.7",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bcrypt": "^5.1.1",
+    "bull": "^4.16.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "prisma": "^5.17.0",
+    "socket.io": "^4.7.5",
+    "zod": "^3.23.8"
+  }
+}

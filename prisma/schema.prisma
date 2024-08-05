@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+	binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+
+  email    String @unique
+  password String
+  name     String
+
+  Notifications Notification[]
+  Products      Product[]
+  Orders        Order[]
+  Auctions      Auction[]
+  AuctionBids   AuctionBid[]
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId String
+
+  type    NotificationType
+  message String
+  status  NotificationStatus
+
+  createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  AUCTION_START
+  AUCTION_BID
+  AUCTION_END
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+}
+
+model Admin {
+  id String @id @default(cuid())
+
+  email    String @unique
+  password String
+  name     String
+
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id String @id @default(cuid())
+
+  name        String
+  description String
+  User        User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId      String
+
+  status ProductStatus
+
+  Orders   Order?
+  // auctions as array because if the product is not sold in previous auction,
+  // another aution may be started with the same product
+  Auctions Auction[]
+
+  createdAt DateTime @default(now())
+}
+
+enum ProductStatus {
+  NONE
+  IN_AUCTION
+  SOLD
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId String
+
+  Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  productId String  @unique
+
+  Auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  auctionId String  @unique
+
+  AuctionBid   AuctionBid @relation(fields: [auctionBidId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  auctionBidId String     @unique
+
+  createdAt DateTime @default(now())
+}
+
+model Auction {
+  id String @id @default(cuid())
+
+  endDate DateTime
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId String
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  productId String
+
+  prices      Int[]
+  AuctionBids AuctionBid[]
+
+  Orders Order?
+
+  createdAt DateTime @default(now())
+}
+
+model AuctionBid {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  amount Int
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId String
+
+  auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  auctionId String
+
+  Order     Order?
+}

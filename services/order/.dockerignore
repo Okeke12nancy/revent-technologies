@@ -1,0 +1,8 @@
+services/admin/
+services/auction/
+services/user/
+services/product/
+
+node_modules
+volumes
+dist
